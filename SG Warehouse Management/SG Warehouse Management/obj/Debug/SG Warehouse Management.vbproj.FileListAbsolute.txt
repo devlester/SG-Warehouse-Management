@@ -1,0 +1,18 @@
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\bin\Debug\SG Warehouse Management.exe
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\bin\Debug\SG Warehouse Management.pdb
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\bin\Debug\SG Warehouse Management.xml
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\obj\Debug\SG_Warehouse_Management.LoginForm.resources
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\obj\Debug\SG_Warehouse_Management.MainMenu.resources
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\obj\Debug\SG_Warehouse_Management.Resources.resources
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\obj\Debug\SG_Warehouse_Management.PickLocationForm.resources
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\obj\Debug\SG_Warehouse_Management.PickMainForm.resources
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\obj\Debug\SG_Warehouse_Management.PickScanForm.resources
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\obj\Debug\SG_Warehouse_Management.ReceiveOrdersForm.resources
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\obj\Debug\SG_Warehouse_Management.ReceiveScanForm.resources
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\obj\Debug\SG Warehouse Management.vbproj.GenerateResource.Cache
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\obj\Debug\SG Warehouse Management.exe
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\obj\Debug\SG Warehouse Management.xml
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\obj\Debug\SG Warehouse Management.pdb
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\obj\Debug\SG_Warehouse_Management.Putaway.resources
+C:\Users\Lester Lloyd\OneDrive\Documents\Visual Studio 2008\Projects\SG Warehouse Management\SG Warehouse Management\obj\Debug\SG_Warehouse_Management.BoxForm.resources
