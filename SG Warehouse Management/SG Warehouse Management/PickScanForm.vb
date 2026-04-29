@@ -56,15 +56,14 @@ Public Class PickScanForm
     Private Sub ValidateBarcode(ByVal scannedBarcode As String)
 
         Try
-            MsgBox(stats)
-            Dim url As String = "http://192.168.1.122/stock-api/get_items.php?location=" & LocationCode & _
-                               "&stylecode=" & StyleCode & _
-                               "&barcode=" & scannedBarcode & _
-                               "&stats=" & stats
+            Dim url As String = "http://192.168.1.122/stock-api/get_items.php?location=" & Uri.EscapeDataString(LocationCode) & _
+                               "&stylecode=" & Uri.EscapeDataString(StyleCode) & _
+                               "&barcode="   & Uri.EscapeDataString(scannedBarcode) & _
+                               "&stats="     & Uri.EscapeDataString(stats)
 
             Dim request As WebRequest = WebRequest.Create(url)
-            request.Method = "GET" ' ✅ FIX (you are using query string)
-            request.Timeout = 10000 ' 🔥 increase timeout
+            request.Method  = "GET"
+            request.Timeout = 10000
 
             Using response As WebResponse = request.GetResponse()
                 Using stream As Stream = response.GetResponseStream()
@@ -72,96 +71,37 @@ Public Class PickScanForm
 
                         Dim result As String = reader.ReadToEnd().Trim()
 
-                        ' 👉 DEBUG (optional)
-                        'MessageBox.Show(result)
-
-                        ' 👉 INVALID RESPONSE
-                        If result = "INVALID" OrElse String.IsNullOrEmpty(result) Then
+                        If String.IsNullOrEmpty(result) OrElse JsonGetStr(result, "status") = "invalid" Then
                             MsgBox("Invalid barcode!", MsgBoxStyle.OkOnly)
-
                             txt_barcode.Focus()
                             txt_barcode.SelectAll()
                             Exit Sub
                         End If
 
-                        ' 👉 CLEAN RESPONSE
-                        result = result.Replace("{", "").Replace("}", "").Replace("""", "")
-
-                        Dim fields() As String = result.Split(",")
-
-                        ' 👉 RESET (important para di mag halo old data)
+                        ' Reset fields before populating
                         Txt_from_location.Text = ""
-                        txt_qty_to_pick.Text = ""
-                        txt_picked_qty.Text = ""
+                        txt_qty_to_pick.Text   = ""
+                        txt_picked_qty.Text    = ""
                         txt_product_style.Text = ""
-                        txt_product_name.Text = ""
-                        txt_box_no.Text = "" ' optional
+                        txt_product_name.Text  = ""
+                        txt_box_no.Text        = ""
 
-                        Dim pickedQty As Integer = 0
-                        Dim boxedQty As Integer = 0
-                        Dim remainingToBox As Integer = 0
+                        Txt_from_location.Text = JsonGetStr(result, "product_location")
+                        txt_barcode.Text       = JsonGetStr(result, "product_code")
+                        txt_qty_to_pick.Text   = JsonGetStr(result, "qty_to_pick")
+                        txt_product_style.Text = JsonGetStr(result, "product_style")
+                        txt_product_name.Text  = JsonGetStr(result, "product_name")
 
-                        For Each field In fields
-                            Dim pair() As String = field.Split(":"c)
-
-                            If pair.Length = 2 Then
-                                Dim key As String = pair(0).Trim()
-                                Dim value As String = pair(1).Trim()
-
-                                Select Case key
-
-                                    Case "product_location"
-                                        Txt_from_location.Text = value
-
-                                    Case "product_code"
-                                        txt_barcode.Text = value
-
-                                    Case "qty_to_pick"
-                                        txt_qty_to_pick.Text = value
-
-                                    Case "picked_qty"
-                                        pickedQty = Val(value)
-
-                                    Case "putaway_qty", "boxed_qty"
-                                        boxedQty = Val(value)
-
-                                    Case "remaining_to_box"
-                                        remainingToBox = Val(value)
-
-                                    Case "product_style"
-                                        txt_product_style.Text = value
-
-                                    Case "product_name"
-                                        txt_product_name.Text = value
-
-                                End Select
-                            End If
-                        Next
-
-                        ' 👉 FINAL DISPLAY LOGIC
+                        Dim pickedQty As Integer = Val(JsonGetStr(result, "picked_qty"))
 
                         If stats = "fromPutaway" Then
-                            ' 🔥 show remaining to box
                             txt_qty_to_pick.Text = pickedQty.ToString()
                             Label6.Text = "Remaining"
                             Label7.Text = "Qty to Put"
-
                         Else
-                            ' 🔥 show picked qty
-
-                            txt_picked_qty.Text = remainingToBox.ToString()
+                            txt_picked_qty.Text = pickedQty.ToString()
                         End If
 
-                        ' 👉 VALIDATION (prevent negative / invalid)
-                        'If Val(txt_picked_qty.Text) <= 0 Then
-                        'MsgBox("No remaining quantity!", MsgBoxStyle.Exclamation)
-
-                        'txt_barcode.Focus()
-                        'txt_barcode.SelectAll()
-                        'Exit Sub
-                        'End If
-
-                        ' 👉 MOVE TO QTY INPUT
                         txt_picked_qty.Focus()
                         txt_picked_qty.SelectAll()
 
@@ -289,7 +229,6 @@ Public Class PickScanForm
                                      "&pick_no=" & Uri.EscapeDataString(pickNo) & _
                                      "&box_no=" & Uri.EscapeDataString(boxNo) & _
                                      "&from_location=" & Uri.EscapeDataString(fromLoc)
-            MsgBox(postData)
             Dim bytes As Byte() = Encoding.UTF8.GetBytes(postData)
 
             ' 👉 REQUEST
@@ -315,29 +254,17 @@ Public Class PickScanForm
                         Exit Sub
                     End If
 
-                    Dim parts() As String = result.Split("|"c)
+                    Dim status As String = JsonGetStr(result, "status")
+                    Dim action As String = JsonGetStr(result, "action")
 
-                    If parts.Length = 0 Then
-                        MessageBox.Show("Invalid response: " & result)
-                        Exit Sub
-                    End If
+                    If status = "success" Then
 
-                    Dim status As String = parts(0)
-
-                    If status = "SUCCESS" Then
-
-                        Dim action As String = ""
-                        If parts.Length > 1 Then action = parts(1)
-
-                        If action = "UPDATED" Then
-                            MessageBox.Show("Quantity updated!")
-                            MessageBox.Show("Saved Successfully!")
-                        ElseIf action = "INSERTED" Then
-                            MessageBox.Show("New box saved!")
-                            MessageBox.Show("Saved Successfully!")
+                        If action = "PICK_UPDATED" Then
+                            MessageBox.Show("Quantity updated!" & vbCrLf & "Saved Successfully!")
+                        ElseIf action = "PICK_INSERTED" Then
+                            MessageBox.Show("New pick saved!" & vbCrLf & "Saved Successfully!")
                         ElseIf action = "PUTAWAY" Then
                             MessageBox.Show("You have successfully put in a box!")
-
                         End If
 
                         ' ✅ RETURN TO MAIN FORM (SAFE)
@@ -372,12 +299,8 @@ Public Class PickScanForm
 
                         Me.Close()
 
-                    ElseIf status = "ERROR" Then
-
-                        Dim errorMsg As String = ""
-                        If parts.Length > 1 Then errorMsg = parts(1)
-
-                        MessageBox.Show("Server Error: " & errorMsg)
+                    ElseIf status = "error" Then
+                        MessageBox.Show("Server Error: " & JsonGetStr(result, "message"))
 
                     Else
                         MessageBox.Show("Unexpected response: " & result)

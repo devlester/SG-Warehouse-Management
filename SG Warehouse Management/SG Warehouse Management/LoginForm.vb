@@ -44,13 +44,14 @@ Public Class LoginForm
                     Dim result As String = reader.ReadToEnd().Trim()
 
                     ' Check PHP response
-                    If result.StartsWith("OK|") Then
-                        Dim fullname As String = result.Split("|"c)(1)
+                    Dim status As String = JsonGetStr(result, "status")
+                    If status = "ok" Then
+                        Dim fullname As String = JsonGetStr(result, "fullname")
                         MessageBox.Show("Welcome " & fullname)
                         MainMenu.Show()
                         Me.Hide()
-                    ElseIf result.StartsWith("ERROR|") Then
-                        MessageBox.Show("Server Error: " & result.Split("|"c)(1))
+                    ElseIf status = "error" Then
+                        MessageBox.Show("Server Error: " & JsonGetStr(result, "message"))
                     Else
                         MessageBox.Show("Invalid username or password")
                     End If
@@ -86,7 +87,7 @@ Public Class LoginForm
                 Using reader As New StreamReader(resp.GetResponseStream())
                     Dim result As String = reader.ReadToEnd().Trim()
 
-                    If result = "CONNECTED" Then
+                    If JsonGetStr(result, "status") = "connected" Then
                         connectionBar.Text = "🟢 Connected to Database"
                     Else
                         connectionBar.Text = "🔴 No Database Connection"

@@ -1,29 +1,27 @@
 <?php
-header("Content-Type: text/plain");
+header("Content-Type: application/json");
 
 $conn = mysqli_connect("localhost", "root", "", "stocktake");
 if (!$conn) {
-    echo "ERROR|DB";
+    echo json_encode(["status" => "error", "message" => "DB"]);
     exit;
 }
 
-$sql = "SELECT TRIM(warehouse_name) AS warehouse_name 
-        FROM warehouses 
-        ORDER BY warehouse_name";
-
+$sql    = "SELECT TRIM(warehouse_name) AS warehouse_name FROM warehouses ORDER BY warehouse_name";
 $result = mysqli_query($conn, $sql);
 
 if (!$result) {
-    echo "ERROR|QUERY";
+    echo json_encode(["status" => "error", "message" => "QUERY"]);
     exit;
 }
 
+$warehouses = [];
 while ($row = mysqli_fetch_assoc($result)) {
     if ($row['warehouse_name'] != "") {
-        echo $row['warehouse_name'] . "\n";
+        $warehouses[] = $row['warehouse_name'];
     }
 }
 
-
+echo json_encode(["warehouses" => $warehouses]);
 mysqli_close($conn);
 ?>

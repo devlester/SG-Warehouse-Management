@@ -24,12 +24,8 @@ Public Class ReceiveOrdersForm
 
             Whs_cbox.Items.Clear()
 
-            Dim lines() As String = responseText.Split(ControlChars.Lf)
-
-            For Each line As String In lines
-                If line.Trim() <> "" Then
-                    Whs_cbox.Items.Add(line.Trim())
-                End If
+            For Each name As String In JsonGetStringList(responseText, "warehouses")
+                Whs_cbox.Items.Add(name)
             Next
 
         Catch ex As Exception
@@ -53,12 +49,8 @@ Public Class ReceiveOrdersForm
 
             YearCollection_cbox.Items.Clear()
 
-            Dim lines() As String = responseText.Split(ControlChars.Lf)
-
-            For Each line As String In lines
-                If line.Trim() <> "" Then
-                    YearCollection_cbox.Items.Add(line.Trim())
-                End If
+            For Each col As String In JsonGetStringList(responseText, "collections")
+                YearCollection_cbox.Items.Add(col)
             Next
 
         Catch ex As Exception

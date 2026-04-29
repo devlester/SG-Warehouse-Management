@@ -34,76 +34,25 @@ Public Class PickMainForm
 
                     Dim result As String = reader.ReadToEnd()
 
-                    Dim lines() As String = result.Split(ControlChars.Lf)
-
                     ListBox1.Items.Clear()
 
-                    Dim isFirst As Boolean = True
-                    Dim hasData As Boolean = False
+                    StoreLbl.Text        = Me.StoreLocation
+                    TotalPickingLbl.Text = "Total to pick: " & JsonGetStr(result, "total_to_pick")
+                    TotalPickeddLbl.Text = "Total Picked: "  & JsonGetStr(result, "total_picked")
 
-                    For Each line As String In lines
+                    Dim items As List(Of Dictionary(Of String, String)) = JsonGetObjectList(result, "items")
 
-                        line = line.Trim()
-
-                        If line <> "" Then
-
-                            Dim parts() As String = line.Split("|"c)
-
-                            If parts.Length >= 9 Then
-
-                                hasData = True
-
-                                Dim store As String = parts(0)
-                                Dim totalToPick As String = parts(1)
-                                Dim totalPicked As String = parts(2)
-                                Dim totalBoxed As String = parts(3)
-                                Dim fromLoc As String = parts(4)
-                                Dim style As String = parts(5)
-                                Dim qty As String = parts(6)
-                                Dim remainingToBox As String = parts(7)
-                                Dim status As String = parts(8)
-
-                                ' 👉 SET LABELS ONCE
-                                If isFirst Then
-                                    StoreLbl.Text = store
-                                    TotalPickingLbl.Text = "Total to pick: " & totalToPick
-                                    TotalPickeddLbl.Text = "Total Picked: " & totalPicked
-                                    isFirst = False
-                                End If
-
-                                ' 👉 DISPLAY REMAINING
-
-
-
-                                Dim qtyValue As Integer = Val(qty)
-
-                                If qtyValue <= 0 Then
-                                    Continue For
-                                End If
-
-                                If status = "COMPLETED" Then
-                                    Continue For
-                                End If
-
-                                Dim display As String = fromLoc & " | " & style & " | " & qty
-                                ListBox1.Items.Add(display)
-
-                                ' Dim display As String = fromLoc & " | " & style & " | " & qty
-                                'ListBox1.Items.Add(display)
-
-                            End If
-
-                        End If
-
-                    Next
-
-                    ' 👉 IF NO DATA (ALL PICKED)
-                    If Not hasData Then
-                        ' 👉 still show totals (call separate API or reuse last values)
+                    If items.Count = 0 Then
                         ListBox1.Items.Add("✔ All items picked")
+                    Else
+                        For Each item As Dictionary(Of String, String) In items
+                            Dim qty As Integer    = Val(item("remaining_to_pick"))
+                            Dim status As String  = item("status")
 
-                        ' OPTIONAL: keep previous totals or set manually
-                        ' (better if you create separate API for totals only)
+                            If qty <= 0 OrElse status = "COMPLETED" Then Continue For
+
+                            ListBox1.Items.Add(item("product_location") & " | " & item("product_style") & " | " & qty.ToString())
+                        Next
                     End If
 
                 End Using

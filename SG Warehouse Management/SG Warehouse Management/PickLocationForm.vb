@@ -36,36 +36,20 @@ Public Class PickLocationForm
 
                     Dim result As String = reader.ReadToEnd()
 
-                    Dim lines() As String = result.Split(ControlChars.Lf)
-
                     StoreLocCBox.Items.Clear()
                     PickRefCBox.Items.Clear()
                     pickData.Clear()
 
-                    For Each line As String In lines
+                    For Each loc As Dictionary(Of String, String) In JsonGetObjectList(result, "locations")
+                        Dim store As String  = loc("store")
+                        Dim pickno As String = loc("pick_no")
 
-                        line = line.Trim()
-
-                        If line <> "" Then
-
-                            Dim parts() As String = line.Split("|"c)
-
-                            If parts.Length >= 2 Then
-
-                                Dim store As String = parts(0).Trim()
-                                Dim pickno As String = parts(1).Trim()
-
-                                If Not pickData.ContainsKey(store) Then
-                                    pickData(store) = New List(Of String)
-                                    StoreLocCBox.Items.Add(store)
-                                End If
-
-                                pickData(store).Add(pickno)
-
-                            End If
-
+                        If Not pickData.ContainsKey(store) Then
+                            pickData(store) = New List(Of String)
+                            StoreLocCBox.Items.Add(store)
                         End If
 
+                        pickData(store).Add(pickno)
                     Next
 
                 End Using
