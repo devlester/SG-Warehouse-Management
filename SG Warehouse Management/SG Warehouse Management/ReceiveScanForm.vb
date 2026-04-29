@@ -22,7 +22,6 @@ Public Class ReceiveScanForm
             Dim postData As String = "year_collection=" & Uri.EscapeDataString(ReceiveOrdersForm.YearCollection_cbox.Text) & _
                         "&product_code=" & Uri.EscapeDataString(barcodeTxt.Text)
             Dim bytes() As Byte = Encoding.UTF8.GetBytes(postData)
-            MessageBox.Show(postData)
             Dim req As HttpWebRequest = CType(WebRequest.Create(url), HttpWebRequest)
             req.Method = "POST"
             req.ContentType = "application/x-www-form-urlencoded"
@@ -39,13 +38,11 @@ Public Class ReceiveScanForm
                 Using reader As New StreamReader(response.GetResponseStream())
                     Dim result As String = reader.ReadToEnd().Trim()
 
-                    If result.StartsWith("FOUND|") Then
-                        Dim parts() As String = result.Split("|"c)
-
-                        stylecodeTxt.Text = parts(1)
-                        descriptionTxt.Text = parts(2)
-
-                    ElseIf result = "NOT_FOUND" Then
+                    Dim status As String = JsonGetStr(result, "status")
+                    If status = "found" Then
+                        stylecodeTxt.Text   = JsonGetStr(result, "style")
+                        descriptionTxt.Text = JsonGetStr(result, "name")
+                    ElseIf status = "not_found" Then
                         MessageBox.Show("❌ Product not found for this incoming")
                     Else
                         MessageBox.Show("⚠ Server error")

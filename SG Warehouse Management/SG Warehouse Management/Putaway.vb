@@ -22,27 +22,15 @@ Public Class Putaway
             Using reader As New StreamReader(resp.GetResponseStream())
 
                 Dim result As String = reader.ReadToEnd()
-                Dim lines() As String = result.Split(ControlChars.Lf)
 
                 SelectStore.Items.Clear()
                 storeData.Clear()
 
-                For Each line As String In lines
-                    line = line.Trim()
-
-                    If line.StartsWith("STORE|") Then
-                        Dim parts() As String = line.Split("|"c)
-
-                        If parts.Length >= 3 Then
-                            Dim store As String = parts(1)
-                            Dim pickno As String = parts(2)
-
-                            SelectStore.Items.Add(store)
-
-                            ' 👉 SAVE RELATION
-                            storeData(store) = pickno
-                        End If
-                    End If
+                For Each s As Dictionary(Of String, String) In JsonGetObjectList(result, "stores")
+                    Dim store As String  = s("store")
+                    Dim pickno As String = s("pick_no")
+                    SelectStore.Items.Add(store)
+                    storeData(store) = pickno
                 Next
 
             End Using
@@ -74,25 +62,11 @@ Public Class Putaway
                 Using reader As New StreamReader(resp.GetResponseStream())
 
                     Dim result As String = reader.ReadToEnd()
-                    Dim lines() As String = result.Split(ControlChars.Lf)
 
                     PendingPutaway.Items.Clear()
 
-                    For Each line As String In lines
-                        line = line.Trim()
-
-                        If line.StartsWith("PRODUCT|") Then
-                            Dim parts() As String = line.Split("|"c)
-
-                            If parts.Length >= 4 Then
-                                Dim location As String = parts(1)
-                                Dim style As String = parts(2)
-                                Dim qty As String = parts(3)
-
-                                Dim display As String = location & " | " & style & " | " & qty
-                                PendingPutaway.Items.Add(display)
-                            End If
-                        End If
+                    For Each p As Dictionary(Of String, String) In JsonGetObjectList(result, "products")
+                        PendingPutaway.Items.Add(p("location") & " | " & p("style") & " | " & p("remaining_qty"))
                     Next
 
                 End Using
@@ -131,7 +105,6 @@ Public Class Putaway
             If PendingPutaway.SelectedItem IsNot Nothing Then
 
                 Dim textValue As String = PendingPutaway.SelectedItem.ToString()
-                MsgBox(textValue)
                 Dim parts() As String = textValue.Split("|"c)
 
                 Dim location As String = parts(0).Trim()

@@ -1,10 +1,5 @@
 <?php
-header("Content-Type: text/plain");
-$conn = mysqli_connect("localhost","root","","stocktake");
-
-if ($conn) {
-    echo "CONNECTED";
-} else {
-    echo "DISCONNECTED";
-}
+header("Content-Type: application/json");
+$conn = mysqli_connect("localhost", "root", "", "stocktake");
+echo json_encode(["status" => $conn ? "connected" : "disconnected"]);
 ?>

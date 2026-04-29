@@ -59,48 +59,26 @@ Public Class BoxForm
                 Using reader As New StreamReader(resp.GetResponseStream())
 
                     Dim result As String = reader.ReadToEnd()
-                    Dim lines() As String = result.Split(ControlChars.Lf)
 
                     ListView1.Items.Clear()
 
-                    If result.Trim() = "NO_DATA" Then
+                    Dim boxItems As List(Of Dictionary(Of String, String)) = JsonGetObjectList(result, "items")
+
+                    If boxItems.Count = 0 Then
                         MessageBox.Show("No items found")
                         Exit Sub
                     End If
 
-                    For Each line As String In lines
+                    For Each row As Dictionary(Of String, String) In boxItems
+                        Dim qty As String = row("qty")
+                        Dim lvi As New ListViewItem(row("box_no"))
+                        lvi.SubItems.Add(row("style"))
+                        lvi.SubItems.Add(row("name"))
+                        lvi.SubItems.Add(qty)
 
-                        line = line.Trim()
-                        MsgBox(line & "-")
-                        If line <> "" Then
+                        If Val(qty) <= 1 Then lvi.BackColor = Color.LightPink
 
-                            Dim parts() As String = line.Split("|"c)
-
-                            If parts.Length >= 5 Then
-
-                                Dim box As String = parts(0)
-                                Dim style As String = parts(2)
-                                Dim name As String = parts(3)
-                                Dim qty As String = parts(4)
-
-                                Dim item As New ListViewItem(parts(0))
-
-                                item.SubItems.Add(parts(2))
-                                item.SubItems.Add(parts(3))
-                                item.SubItems.Add(parts(4))
-
-
-                                ' 👉 OPTIONAL: highlight low qty
-                                If Val(qty) <= 1 Then
-                                    item.BackColor = Color.LightPink
-                                End If
-
-                                ListView1.Items.Add(item)
-
-                            End If
-
-                        End If
-
+                        ListView1.Items.Add(lvi)
                     Next
 
                     ' 👉 AUTO RESIZE COLUMNS

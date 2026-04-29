@@ -1,29 +1,27 @@
-
-
 <?php
-header("Content-Type: text/plain");
+header("Content-Type: application/json");
 
 $conn = mysqli_connect("localhost", "root", "", "stocktake");
 if (!$conn) {
-    echo "ERROR|DB";
+    echo json_encode(["status" => "error", "message" => "DB"]);
     exit;
 }
 
-$sql = "SELECT year_collection FROM `incoming_products` GROUP by year_collection";
-
+$sql    = "SELECT year_collection FROM `incoming_products` GROUP BY year_collection";
 $result = mysqli_query($conn, $sql);
 
 if (!$result) {
-    echo "ERROR|QUERY";
+    echo json_encode(["status" => "error", "message" => "QUERY"]);
     exit;
 }
 
+$collections = [];
 while ($row = mysqli_fetch_assoc($result)) {
     if ($row['year_collection'] != "") {
-        echo $row['year_collection'] . "\n";
+        $collections[] = $row['year_collection'];
     }
 }
 
-
+echo json_encode(["collections" => $collections]);
 mysqli_close($conn);
 ?>
