@@ -123,4 +123,12 @@ Public Class PickMainForm
     Private Sub ListBox1_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ListBox1.SelectedIndexChanged
 
     End Sub
+
+    Private Sub PrintBtn_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PrintBtn.Click
+        If String.IsNullOrEmpty(pick_no) OrElse String.IsNullOrEmpty(StoreLocation) Then
+            MessageBox.Show("No pick order loaded.")
+            Exit Sub
+        End If
+        PrintPickList.PrintReport(pick_no, StoreLocation)
+    End Sub
 End Class
