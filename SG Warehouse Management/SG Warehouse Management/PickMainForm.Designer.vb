@@ -25,6 +25,7 @@ Partial Public Class PickMainForm
         Me.TotalPickeddLbl = New System.Windows.Forms.Label
         Me.Button2 = New System.Windows.Forms.Button
         Me.Button3 = New System.Windows.Forms.Button
+        Me.PrintBtn = New System.Windows.Forms.Button
         Me.SuspendLayout()
         '
         'ListBox1
@@ -71,6 +72,14 @@ Partial Public Class PickMainForm
         Me.Button3.TabIndex = 6
         Me.Button3.Text = "Putaway"
         '
+        'PrintBtn
+        '
+        Me.PrintBtn.Location = New System.Drawing.Point(12, 238)
+        Me.PrintBtn.Name = "PrintBtn"
+        Me.PrintBtn.Size = New System.Drawing.Size(214, 28)
+        Me.PrintBtn.TabIndex = 7
+        Me.PrintBtn.Text = "Print Report"
+        '
         'PickMainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(96.0!, 96.0!)
@@ -78,6 +87,7 @@ Partial Public Class PickMainForm
         Me.AutoScroll = True
         Me.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange
         Me.ClientSize = New System.Drawing.Size(238, 270)
+        Me.Controls.Add(Me.PrintBtn)
         Me.Controls.Add(Me.Button3)
         Me.Controls.Add(Me.Button2)
         Me.Controls.Add(Me.TotalPickeddLbl)
@@ -95,4 +105,5 @@ Partial Public Class PickMainForm
     Friend WithEvents TotalPickeddLbl As System.Windows.Forms.Label
     Friend WithEvents Button2 As System.Windows.Forms.Button
     Friend WithEvents Button3 As System.Windows.Forms.Button
+    Friend WithEvents PrintBtn As System.Windows.Forms.Button
 End Class
